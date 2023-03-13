@@ -1,0 +1,64 @@
+version: '3'
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - '${RABBITMQ_PORT}:5672'
+    env_file:
+      - .env
+
+  db:
+    image: mongo:latest
+    container_name: mongo
+    network_mode: host
+    restart: always
+    ports:
+      - '${MONGO_INITDB_PORT}:27017'
+    env_file:
+      - .env
+
+  service_a:
+    build: ./service_a
+    network_mode: host
+    restart: always
+    hostname: service_a
+    env_file:
+      - .env
+    environment:
+      API_PORT: ${API_PORT_A}
+    ports:
+      - '${API_PORT_A}:3001'
+    depends_on:
+      - db
+      - rabbitmq
+
+  service_b:
+    build: ./service_b
+    network_mode: host
+    restart: always
+    hostname: service_b
+    env_file:
+      - .env
+    environment:
+      API_PORT: ${API_PORT_B}
+    ports:
+      - '${API_PORT_B}:3002'
+    depends_on:
+      - db
+      - rabbitmq
+
+  service_c:
+    build: ./service_c
+    network_mode: host
+    restart: always
+    hostname: service_c
+    env_file:
+      - .env
+    environment:
+      API_PORT: ${API_PORT_C}
+    ports:
+      - '${API_PORT_C}:3003'
+    depends_on:
+      - db
+      - rabbitmq
