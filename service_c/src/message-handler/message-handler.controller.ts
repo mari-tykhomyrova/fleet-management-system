@@ -19,6 +19,9 @@ export class MessageHandlerController {
     @Payload() data: CarStateDto,
     @Ctx() context: RmqContext,
   ): Promise<void> {
+    if (!data) {
+      return;
+    }
     return this.messageHandlerService.handleCarState(data);
   }
 }

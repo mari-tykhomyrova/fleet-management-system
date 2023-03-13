@@ -24,7 +24,7 @@ export class MessageEmitterService {
     const randomCarState = await this.__generateRandomCarState();
     const record = new RmqRecordBuilder(randomCarState).build();
 
-    this.client
+    await this.client
       .send('car_state', record)
       .pipe(
         catchError((err, caught) => caught),
@@ -37,6 +37,7 @@ export class MessageEmitterService {
     const randomCar = await this.__getRandomCar();
     if (!randomCar) {
       this.client.emit('car_state', null);
+      return;
     }
 
     return {
